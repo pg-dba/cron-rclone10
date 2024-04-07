@@ -87,3 +87,5 @@ zabbix_sender -z ${ZBX_SERVERS} -p ${ZBX_PORT} -s ${ZBX_HOST} -k "${zbxhkey}" -o
 fi
 
 fi
+
+exit ${RC}

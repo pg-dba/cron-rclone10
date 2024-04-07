@@ -82,5 +82,6 @@ fi
 fi
 fi
 
-
 fi
+
+exit ${RC}
