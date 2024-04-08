@@ -12,8 +12,10 @@ RUN set -ex && \
     apk add --no-cache coreutils && \
     apk add --no-cache moreutils && \
     apk add --no-cache iputils-ping && \
+    apk add --no-cache findutils && \
     apk add --no-cache postgresql16-client && \
     apk add --no-cache pgbadger && \
+    apk add --no-cache perl-text-csv_xs && \
     apk add --no-cache p7zip && \
     apk add --no-cache nano && \
     apk add --no-cache postfix && \
