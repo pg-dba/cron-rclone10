@@ -9,7 +9,7 @@ DS=$(date +"%Y-%m-%d 00:00:00.0+03" -d "7 day ago");
 DF=$(date +"%Y-%m-%d 00:00:00.0+03");
 #echo "DS=${DS} DF=${DF}"; 
 pgbadger --no-progressbar --timezone +3 --jobs 1 --format csv --outfile ${FileReport} --begin "${DS}" --end "${DF}" --last-parsed ${FileTmp} \
-  $(find /pglog/*.csv -type f -newermt "${DS}" ! -newermt "${DF}") 2>&1 | ts '[pgbadger]   ';
+  $(find /pglog/*.csv -type f -newermt "${DS}" ! -newermt "${DF}") 2>&1 1>/dev/null | ts '[pgbadger]   ';
 RC=$?
 echo "[pgbadger]  Generate Weekly Report Finished. RC=${RC}"
 
