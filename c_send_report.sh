@@ -4,11 +4,21 @@
 FILEREPORT='/cronwork/pg_profile_daily.html'
 REPORTNAME="Daily Report"
 SUBJTEXT="PostgreSQL [${HOST}] pg_profile ${REPORTNAME}"
+HEADTEXT='<html><head><meta charset="utf-8"></head><body><p style="font-family:Monospace;font-size:10px"><a href="https://postgrespro.ru/docs/postgrespro/13/pgpro-pwr#PGPRO-PWR-SECTIONS-OF-A-REPORT">Описание разделов отчёта</a> <a href="https://github.com/zubkov-andrei/pg_profile/blob/master/doc/pg_profile.md#sections-of-a-report">Description of report sections</a></p></body></html>'
 
-echo '<html><head><meta charset="utf-8"></head><body><p style="font-family:Monospace;font-size:10px"><a href="https://postgrespro.ru/docs/postgrespro/13/pgpro-pwr#PGPRO-PWR-SECTIONS-OF-A-REPORT">Описание разделов отчёта</a> <a href="https://github.com/zubkov-andrei/pg_profile/blob/master/doc/pg_profile.md#sections-of-a-report">Description of report sections</a></p></body></html>' > ${FILEREPORT}
+rm -f ${FILEREPORT}
+
 PGPASSWORD=${PASSWORD} psql -h ${HOST} -p ${PORT} -U ${USERNAME} -d ${DBNAME} -qAt -c "SELECT profile.report_daily();" --output="${FILEREPORT}"
 RC=$?
 echo "[pg_profile]  Generate ${REPORTNAME}. RC=${RC}"
+
+if [[ ( ! -f ${FILEREPORT} ) || ( ! -s ${FILEREPORT} ) ]]; then
+RC=-1
+echo "[pg_profile]  Report is zero. RC=${RC}"
+exit ${RC}
+fi
+
+sed -i "1i${HEADTEXT}" ${FILEREPORT}
 
 sed -i 's/<H2>Report sections<\/H2>/<H2><a NAME=report_sec>Report sections<\/H2>/gi' ${FILEREPORT}
 sed -i 's/<\/a><\/H3>/<\/a> <a HREF=#report_sec><button>up to contents<\/button><\/a><\/H3>/g' ${FILEREPORT}
