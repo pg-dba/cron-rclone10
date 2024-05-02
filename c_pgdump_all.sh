@@ -30,6 +30,15 @@ echo "[pgdump]  PGDUMPALL ${HOST}. pg_dump db:${DBs[$dbName]} schema-only finish
 
 done;
 
+
+PGPASSWORD=${PASSWORD} psql -h ${HOST} -p ${PORT} -U ${USERNAME} -d postgres --pset=pager=off -xtA -c "SELECT pg_read_file('/var/lib/postgresql/data/postgresql.conf');" --output="/pgbackups/${fprefix}_postgresql_conf.sql"
+RC=$?
+echo "[pgdump]  PGDUMPALL ${HOST}. postgresql.conf saved. RC=${RC}"
+PGPASSWORD=${PASSWORD} psql -h ${HOST} -p ${PORT} -U ${USERNAME} -d postgres --pset=pager=off -xtA -c "SELECT pg_read_file('/var/lib/postgresql/data/pg_hba.conf');" --output="/pgbackups/${fprefix}_pg_hba_conf.sql"
+RC=$?
+echo "[pgdump]  PGDUMPALL ${HOST}. pg_hba.conf saved. RC=${RC}"
+
+
 if [ -n "${PG_DUMPALL_PASSWORD}" ]; then
 7z -p"${PG_DUMPALL_PASSWORD}" a /pgbackups/${fprefix}.7z /pgbackups/${fprefix}*.sql 2>&1 1>/dev/null;
 else
@@ -54,6 +63,7 @@ if [[ ("$#" -eq 1) && ($1 =~ ^[[:digit:]]+$) ]]; then
 
 saves=$1
 
+# ls -1t --time-style=long-iso /pgbackups/${HOST}_*.tgz
 rm -f $(ls -1t --time-style=long-iso /pgbackups/${HOST}_*.tgz 2>/dev/null | sed -n "$((${saves}+1)),\$p")
 
 echo "[pgdump]  PGDUMPALL ${HOST}. $1 rotation completed."
