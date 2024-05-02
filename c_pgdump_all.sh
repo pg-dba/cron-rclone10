@@ -64,8 +64,11 @@ if [[ ("$#" -eq 1) && ($1 =~ ^[[:digit:]]+$) ]]; then
 saves=$1
 
 # ls -1t --time-style=long-iso /pgbackups/${HOST}_*.tgz
+if [ -n "${PG_DUMPALL_PASSWORD}" ]; then
+rm -f $(ls -1t --time-style=long-iso /pgbackups/${HOST}_*.7z 2>/dev/null | sed -n "$((${saves}+1)),\$p")
+else
 rm -f $(ls -1t --time-style=long-iso /pgbackups/${HOST}_*.tgz 2>/dev/null | sed -n "$((${saves}+1)),\$p")
-
+fi
 echo "[pgdump]  PGDUMPALL ${HOST}. $1 rotation completed."
 
 if [ -n "${ZBX_SERVERS}" ]; then
